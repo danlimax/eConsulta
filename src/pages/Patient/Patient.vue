@@ -1,9 +1,9 @@
 <script setup>
-import SchedulingForm from "./components/SchedulesForm.vue";
+import PatientSchedulesModal from "./components/PatientSchedulesModal.vue";
 import SchedulingHistory from "./components/SchedulesHistory.vue";
 </script>
 
 <template>
-  <SchedulingForm />
+  <PatientSchedulesModal />
   <SchedulingHistory />
 </template>

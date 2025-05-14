@@ -31,7 +31,6 @@ const items = [
     label="Médicos"
     :items="items"
     item-title="name"
-    variant="outlined"
     persistent-placeholder
   >
     <template v-slot:item="{ props: itemProps, item }">
