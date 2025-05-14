@@ -13,14 +13,14 @@ import SchedulesSelect from "./SchedulesSelect.vue";
             model-value="John Leider"
             persistent-placeholder
           ></v-text-field>
-
+          <DoctorSelect />
           <v-date-input
             label="Data do agendamento"
             prepend-icon=""
             persistent-placeholder
+            disabled
           ></v-date-input>
 
-          <DoctorSelect />
           <SchedulesSelect />
         </v-container>
       </v-main>
