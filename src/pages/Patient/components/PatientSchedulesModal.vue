@@ -38,13 +38,14 @@ const chips = ref([]);
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
+          <v-btn text="Fechar" variant="plain" @click="dialog = false"></v-btn>
 
           <v-btn
+            type="submit"
             color="primary"
-            text="Save"
+            text="Enviar"
             variant="tonal"
-            @click="dialog = false"
+            form="patientForm"
           ></v-btn>
         </v-card-actions>
       </v-card>

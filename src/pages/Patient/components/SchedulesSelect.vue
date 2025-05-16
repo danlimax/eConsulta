@@ -3,9 +3,10 @@ const items = ["10:00", "11:30", "12:00"];
 </script>
 <template>
   <v-select
-    label="Horários"
+    label="Horários*"
     :items="items"
     item-title="schedules"
     persistent-placeholder
+    required
   ></v-select>
 </template>

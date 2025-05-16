@@ -60,7 +60,7 @@ const plants = [
 </script>
 <template>
   <v-data-table
-    class="w-50 ma-auto"
+    class="w-lg-50 w-md-75 ma-auto"
     :headers="headers"
     :items="plants"
     density="compact"

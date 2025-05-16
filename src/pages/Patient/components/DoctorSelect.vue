@@ -28,7 +28,7 @@ const items = [
 </script>
 <template>
   <v-select
-    label="Médicos"
+    label="Médicos*"
     :items="items"
     item-title="name"
     persistent-placeholder
@@ -37,6 +37,7 @@ const items = [
       <v-list-item
         v-bind="itemProps"
         :subtitle="item.raw.department"
+        required
       ></v-list-item>
     </template>
   </v-select>

@@ -1,6 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 
-import Home from "./pages/Home/Home.vue";
+import Home from "./pages/Home/index.vue";
 import Doctor from "./pages/Doctor/Doctor.vue";
 import Patient from "./pages/Patient/Patient.vue";
 
