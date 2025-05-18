@@ -1,68 +1,40 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import AppointmentService from "../../../services/appointmentService";
+
 const headers = [
   { title: "Nome", align: "start", sortable: false, key: "name" },
   { title: "Horário", align: "end", key: "schedule" },
   { title: "Data", align: "end", key: "date" },
 ];
 
-const plants = [
-  {
-    name: "Fern",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Snake Plant",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Monstera",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Pothos",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "ZZ Plant",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Spider Plant",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Air Plant",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Peperomia",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Aloe Vera",
-    schedule: "Low",
-    date: "20cm",
-  },
-  {
-    name: "Jade Plant",
-    schedule: "Low",
-    date: "20cm",
-  },
-];
+const appointments = ref([]);
+
+const loadAppointments = async () => {
+  const service = new AppointmentService();
+  try {
+    const data = await service.list();
+    appointments.value = data.map((appointment) => ({
+      name: appointment.doctor?.name ?? "Desconhecido",
+      schedule: new Date(appointment.startTime).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      date: new Date(appointment.startTime).toLocaleDateString(),
+    }));
+  } catch (error) {
+    console.error("Failed to load appointments", error);
+  }
+};
+
+onMounted(loadAppointments);
 </script>
+
 <template>
   <v-data-table
     class="w-lg-50 w-md-75 ma-auto"
     :headers="headers"
-    :items="plants"
+    :items="appointments"
     density="compact"
     item-key="name"
   ></v-data-table>

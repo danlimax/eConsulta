@@ -38,16 +38,11 @@ function clear() {
     <v-layout>
       <v-main>
         <v-container class="pt-8">
-          <v-text-field
-            label="Nome Completo*"
-            persistent-placeholder
-          ></v-text-field>
           <DoctorSelect />
           <v-date-input
             label="Data do agendamento*"
             prepend-icon=""
             persistent-placeholder
-            disabled
           ></v-date-input>
 
           <SchedulesSelect />
