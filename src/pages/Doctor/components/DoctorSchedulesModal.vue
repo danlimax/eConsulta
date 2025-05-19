@@ -79,19 +79,20 @@ const chips = ref([]);
           ></v-btn>
         </v-card-actions>
       </v-card>
-      <v-card title="Cadastrar novo horário">
+
+      <v-card title="Atualizar horário">
         <v-card-text>
           <div class="d-flex flex-column justify-center">
             <v-date-input
               v-model="model"
-              label="Selecione dia(s)"
-              multiple
+              label="Selecione o intervalo de dias"
+              multiple="range"
             ></v-date-input>
 
             <v-combobox
               v-model="chips"
               :items="items"
-              label="Escreva um ou mais horários"
+              label="Escreva um ou mais horários *"
               prepend-icon="mdi-filter-variant"
               chips
               clearable
@@ -108,7 +109,7 @@ const chips = ref([]);
           </div>
 
           <small class="text-caption text-medium-emphasis"
-            >*indicates required field</small
+            >* indica um campo obrigatório</small
           >
         </v-card-text>
 

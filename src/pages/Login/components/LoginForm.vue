@@ -20,13 +20,13 @@ const valid = ref(false);
 
 // Form validation rules
 const emailRules = [
-  (v) => !!v || "Email is required",
-  (v) => /.+@.+\..+/.test(v) || "Email must be valid",
+  (v) => !!v || "Por favor digite um e-mail",
+  (v) => /.+@.+\..+/.test(v) || "O e-mail deve ser válido",
 ];
 
 const passwordRules = [
-  (v) => !!v || "Password is required",
-  (v) => v.length >= 6 || "Password must be at least 6 characters",
+  (v) => !!v || "A senha é obrigatória",
+  (v) => v.length >= 6 || "A senha deve ter pelo menos 6 caracteres",
 ];
 
 const handleSubmit = async () => {
@@ -50,7 +50,7 @@ const handleSubmit = async () => {
     // Redirect to dashboard or home page
     router.push("/");
   } catch (err) {
-    error.value = err.message || "An error occurred during login";
+    error.value = err.message || "Ocorreu um erro durante o login";
   } finally {
     loading.value = false;
   }
@@ -68,7 +68,7 @@ const handleSubmit = async () => {
               eConsulta
             </div>
             <div class="text-subtitle-1 text-medium-emphasis">
-              Sign in to your account
+              Entre na sua conta
             </div>
           </v-card-title>
 
@@ -90,7 +90,7 @@ const handleSubmit = async () => {
               <v-text-field
                 v-model="form.email"
                 :rules="emailRules"
-                label="Email address"
+                label="E-mail"
                 type="email"
                 variant="outlined"
                 prepend-inner-icon="mdi-email"
@@ -103,7 +103,7 @@ const handleSubmit = async () => {
               <v-text-field
                 v-model="form.password"
                 :rules="passwordRules"
-                label="Password"
+                label="Senha"
                 :type="showPassword ? 'text' : 'password'"
                 variant="outlined"
                 prepend-inner-icon="mdi-lock"
@@ -114,10 +114,9 @@ const handleSubmit = async () => {
                 class="mb-3"
               ></v-text-field>
 
-              <!-- Remember Me & Forgot Password -->
               <div class="d-flex justify-space-between align-center mb-4">
                 <v-checkbox
-                  label="Remember me"
+                  label="Lembrar-me"
                   density="compact"
                   hide-details
                   :disabled="loading"
@@ -129,7 +128,7 @@ const handleSubmit = async () => {
                   href="#"
                   class="text-none"
                 >
-                  Forgot password?
+                  Esqueçeu sua senha?
                 </v-btn>
               </div>
 
@@ -144,22 +143,22 @@ const handleSubmit = async () => {
                 :disabled="!valid || loading"
                 class="mb-4"
               >
-                Sign in
+                Entrar
               </v-btn>
 
               <!-- Sign Up Link -->
               <div class="text-center">
                 <span class="text-body-2 text-medium-emphasis">
-                  Don't have an account?
+                  Ainda não tem uma conta?
                 </span>
                 <v-btn
                   variant="text"
                   color="primary"
                   size="small"
-                  href="#"
+                  href="/register"
                   class="text-none ml-1"
                 >
-                  Sign up
+                  Cadastrar
                 </v-btn>
               </div>
             </v-card-text>

@@ -4,13 +4,16 @@ class AppointmentService extends APIService {
   async list() {
     try {
       const token = this.getToken();
-      const response = await fetch(`${this.baseURL}/Schedule/patient`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${this.baseURL}/schedule/patient/apointments`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -27,7 +30,7 @@ class AppointmentService extends APIService {
   async listDoctors() {
     try {
       const token = this.getToken();
-      const response = await fetch(`${this.baseURL}/User/doctors`, {
+      const response = await fetch(`${this.baseURL}/user/doctors`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

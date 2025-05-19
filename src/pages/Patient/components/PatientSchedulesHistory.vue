@@ -1,4 +1,5 @@
 <script setup>
+import PatientSchedulesModal from "./PatientSchedulesModal.vue";
 import { ref, onMounted } from "vue";
 import AppointmentService from "../../../services/appointmentService";
 
@@ -31,11 +32,14 @@ onMounted(loadAppointments);
 </script>
 
 <template>
-  <v-data-table
-    class="w-lg-50 w-md-75 ma-auto"
-    :headers="headers"
-    :items="appointments"
-    density="compact"
-    item-key="name"
-  ></v-data-table>
+  <v-container class="ma-auto">
+    <PatientSchedulesModal />
+    <v-data-table
+      class="w-lg-50 w-md-75 ma-auto"
+      :headers="headers"
+      :items="appointments"
+      density="compact"
+      item-key="name"
+    ></v-data-table>
+  </v-container>
 </template>

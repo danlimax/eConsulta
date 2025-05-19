@@ -31,7 +31,7 @@ class AuthService extends APIService {
 
   async registerPatient(userData) {
     try {
-      const response = await fetch(`${this.baseURL}/User/patient`, {
+      const response = await fetch(`${this.baseURL}/user/patient`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ class AuthService extends APIService {
 
   async registerDoctor(userData) {
     try {
-      const response = await fetch(`${this.baseURL}/User/doctor`, {
+      const response = await fetch(`${this.baseURL}/user/doctor`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ class AuthService extends APIService {
   async userDetails() {
     try {
       const token = this.getToken();
-      const response = await fetch(`${this.baseURL}/User/me`, {
+      const response = await fetch(`${this.baseURL}/user/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import authService from "@/services/authService";
 import Home from "./pages/Home/index.vue";
 import Doctor from "./pages/Doctor/Doctor.vue";
 import Patient from "./pages/Patient/Patient.vue";
-import PatientLogin from "./pages/PatientLogin/PatientLogin.vue";
+import Login from "./pages/Login/Login.vue";
 import Register from "./pages/Register/Register.vue";
 
 const routes = [
@@ -19,7 +19,7 @@ const routes = [
     component: Patient,
     meta: { requiresAuth: true, requiresPatient: true },
   },
-  { path: "/login", component: PatientLogin },
+  { path: "/login", component: Login },
   { path: "/register", component: Register },
 ];
 

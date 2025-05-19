@@ -1,4 +1,5 @@
 <script setup>
+import DoctorSchedulesModal from "./DoctorSchedulesModal.vue";
 const headers = [
   { title: "Nome do paciente", align: "start", sortable: false, key: "name" },
   { title: "Horário", align: "end", key: "schedule" },
@@ -59,11 +60,14 @@ const plants = [
 ];
 </script>
 <template>
-  <v-data-table
-    class="w-lg-50 w-md-75 ma-auto"
-    :headers="headers"
-    :items="plants"
-    density="compact"
-    item-key="name"
-  ></v-data-table>
+  <v-container class="ma-auto">
+    <DoctorSchedulesModal />
+    <v-data-table
+      class="w-lg-50 w-md-75 ma-auto"
+      :headers="headers"
+      :items="plants"
+      density="compact"
+      item-key="name"
+    ></v-data-table>
+  </v-container>
 </template>
