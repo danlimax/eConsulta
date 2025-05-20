@@ -17,7 +17,7 @@ const chips = ref([]);
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
           class="text-none font-weight-regular"
-          prepend-icon="mdi-calendar"
+          prepend-icon="$calendarPlus"
           text="Novo agendamento"
           variant="tonal"
           v-bind="activatorProps"
@@ -29,7 +29,7 @@ const chips = ref([]);
           <SchedulingForm />
 
           <small class="text-caption text-medium-emphasis"
-            >*indicates required field</small
+            >* indica um campo obrigatório</small
           >
         </v-card-text>
 

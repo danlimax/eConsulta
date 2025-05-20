@@ -28,7 +28,6 @@ const router = createRouter({
   routes,
 });
 
-// Route guard
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const requiresDoctor = to.matched.some(
@@ -44,23 +43,20 @@ router.beforeEach(async (to, from, next) => {
       return;
     }
 
-    // If user type validation is needed, you'd fetch user details here
-    // For now, we'll assume the token is valid if it exists
     if (requiresDoctor || requiresPatient) {
       try {
         const userDetails = await authService.userDetails();
 
         if (requiresDoctor && userDetails.role !== "medico") {
-          next("/"); // Redirect to home if not a doctor
+          next("/");
           return;
         }
 
         if (requiresPatient && userDetails.role !== "paciente") {
-          next("/"); // Redirect to home if not a patient
+          next("/");
           return;
         }
       } catch (error) {
-        // If can't fetch user details, token might be invalid
         authService.logout();
         next("/login");
         return;

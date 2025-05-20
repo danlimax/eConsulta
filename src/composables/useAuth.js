@@ -54,17 +54,14 @@ export function useAuth() {
   };
 
   return {
-    // State
     user: user,
     loading: loading,
     error: error,
 
-    // Computed
     isAuthenticated,
     isPatient,
     isDoctor,
 
-    // Methods
     loadUser,
     login,
     logout,

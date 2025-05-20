@@ -5,16 +5,14 @@ import authService from "@/services/authService";
 
 const router = useRouter();
 
-// Form state
 const form = reactive({
   name: "",
   email: "",
   password: "",
   confirmPassword: "",
-  userType: "patient", // Default to patient
+  userType: "patient",
 });
 
-// UI state
 const loading = ref(false);
 const error = ref("");
 const success = ref("");
@@ -22,13 +20,11 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const valid = ref(false);
 
-// User type options
 const userTypes = [
-  { value: "patient", title: "Paciente", icon: "mdi-account", color: "blue" },
-  { value: "doctor", title: "Médico", icon: "mdi-doctor", color: "green" },
+  { value: "patient", title: "Paciente", icon: "$account", color: "blue" },
+  { value: "doctor", title: "Médico", icon: "$doctor", color: "green" },
 ];
 
-// Form validation rules
 const nameRules = [
   (v) => !!v || "Nome é obigatório",
   (v) => v.length >= 2 || "O nome deve ter pelo menos 2 caracteres",
@@ -50,7 +46,6 @@ const confirmPasswordRules = [
 ];
 
 const handleSubmit = async () => {
-  // Check if form is valid
   if (!valid.value) {
     return;
   }
@@ -73,16 +68,13 @@ const handleSubmit = async () => {
       response = await authService.registerDoctor(userData);
     }
 
-    // Handle successful registration
     console.log("Registration successful:", response);
     success.value = `Conta criada com sucesso! Agora você pode fazer login como ${form.userType}.`;
 
-    // Reset form
     Object.keys(form).forEach((key) => {
       if (key !== "userType") form[key] = "";
     });
 
-    // Redirect to login after a delay
     setTimeout(() => {
       router.push("/login");
     }, 2000);
@@ -103,7 +95,6 @@ const goToLogin = () => {
     <v-row align="center" justify="center" class="fill-height">
       <v-col cols="12" sm="8" md="6" lg="5" xl="4">
         <v-card class="pa-4" elevation="8" rounded="lg">
-          <!-- Header -->
           <v-card-title class="text-center pa-0 mb-4">
             <div class="text-h4 text-primary font-weight-bold mb-2">
               eConsulta
@@ -113,7 +104,6 @@ const goToLogin = () => {
             </div>
           </v-card-title>
 
-          <!-- Success Alert -->
           <v-alert
             v-if="success"
             type="success"
@@ -124,7 +114,6 @@ const goToLogin = () => {
             @click:close="success = ''"
           ></v-alert>
 
-          <!-- Error Alert -->
           <v-alert
             v-if="error"
             type="error"
@@ -135,10 +124,9 @@ const goToLogin = () => {
             @click:close="error = ''"
           ></v-alert>
 
-          <!-- Registration Form -->
           <v-form v-model="valid" @submit.prevent="handleSubmit">
             <v-card-text class="pa-0">
-              <!-- User Type Selection -->
+              <
               <div class="mb-4">
                 <v-label class="text-subtitle-2 font-weight-medium mb-2">
                   Cadastre como
@@ -169,64 +157,57 @@ const goToLogin = () => {
                 </v-radio-group>
               </div>
 
-              <!-- Name Field -->
               <v-text-field
                 v-model="form.name"
                 :rules="nameRules"
                 label="Nome completo"
                 variant="outlined"
-                prepend-inner-icon="mdi-account"
+                prepend-inner-icon="$account"
                 :disabled="loading"
                 required
                 class="mb-3"
               ></v-text-field>
 
-              <!-- Email Field -->
               <v-text-field
                 v-model="form.email"
                 :rules="emailRules"
                 label="E-mail"
                 type="email"
                 variant="outlined"
-                prepend-inner-icon="mdi-email"
+                prepend-inner-icon="$email"
                 :disabled="loading"
                 required
                 class="mb-3"
               ></v-text-field>
 
-              <!-- Password Field -->
               <v-text-field
                 v-model="form.password"
                 :rules="passwordRules"
                 label="Senha"
                 :type="showPassword ? 'text' : 'password'"
                 variant="outlined"
-                prepend-inner-icon="mdi-lock"
-                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                prepend-inner-icon="$lock"
+                :append-inner-icon="showPassword ? '$eye' : '$eyeOff'"
                 @click:append-inner="showPassword = !showPassword"
                 :disabled="loading"
                 required
                 class="mb-3"
               ></v-text-field>
 
-              <!-- Confirm Password Field -->
               <v-text-field
                 v-model="form.confirmPassword"
                 :rules="confirmPasswordRules"
                 label="Confirme sua senha"
                 :type="showConfirmPassword ? 'text' : 'password'"
                 variant="outlined"
-                prepend-inner-icon="mdi-lock-check"
-                :append-inner-icon="
-                  showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'
-                "
+                prepend-inner-icon="$lockCheck"
+                :append-inner-icon="showConfirmPassword ? '$eye' : '$eyeOff'"
                 @click:append-inner="showConfirmPassword = !showConfirmPassword"
                 :disabled="loading"
                 required
                 class="mb-4"
               ></v-text-field>
 
-              <!-- Terms and Conditions -->
               <div class="text-caption text-medium-emphasis mb-4">
                 Ao criar uma conta, você concorda com nossos
                 <a href="#" class="text-primary text-decoration-none"
@@ -238,7 +219,6 @@ const goToLogin = () => {
                 >.
               </div>
 
-              <!-- Submit Button -->
               <v-btn
                 type="submit"
                 color="primary"
@@ -252,7 +232,6 @@ const goToLogin = () => {
                 Criar Conta
               </v-btn>
 
-              <!-- Sign In Link -->
               <div class="text-center">
                 <span class="text-body-2 text-medium-emphasis">
                   Já tem uma conta?
