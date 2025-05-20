@@ -4,15 +4,16 @@ import AppointmentService from "@/services/appointmentService";
 import AuthService from "@/services/authService";
 
 const dialogCreate = ref(false);
-const dialogUpdate = ref(false);
 const selectedDates = ref([]);
-const timeSlots = ref([]);
+const timeSlots = ref([{ startTime: "", endTime: "" }]);
 const doctorId = ref(null);
 const appointmentService = new AppointmentService();
 
 const snackbar = ref(false);
 const snackbarMessage = ref("");
 const snackbarColor = ref("success");
+
+const emit = defineEmits(["scheduleCreated"]);
 
 const showSnackbar = (message, color = "success") => {
   snackbarMessage.value = message;
@@ -67,11 +68,7 @@ const resetForm = () => {
 };
 
 watch(dialogCreate, (val) => {
-  if (val) resetForm();
-});
-
-watch(dialogUpdate, (val) => {
-  if (val) resetForm();
+  if (!val) resetForm();
 });
 
 const submitSchedule = async () => {
@@ -87,6 +84,8 @@ const submitSchedule = async () => {
     showSnackbar("Horários criados com sucesso!");
     dialogCreate.value = false;
     resetForm();
+
+    emit("scheduleCreated");
   } catch (error) {
     console.error(error);
     showSnackbar("Erro ao criar os horários", "error");
@@ -151,16 +150,15 @@ const submitSchedule = async () => {
               class="d-flex align-center"
             >
               <v-row>
-                <v-col cols="5">
+                <v-col cols="6">
                   <v-text-field
                     v-model="slot.startTime"
                     label="Horário de início *"
                     type="time"
-                    prepend-icon="$timerPlus"
                     density="compact"
                   />
                 </v-col>
-                <v-col cols="5">
+                <v-col cols="6">
                   <v-text-field
                     v-model="slot.endTime"
                     label="Horário de fim *"
@@ -194,3 +192,7 @@ const submitSchedule = async () => {
     </v-dialog>
   </div>
 </template>
+
+<style scoped>
+/* Your existing styles */
+</style>

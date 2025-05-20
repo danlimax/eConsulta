@@ -1,28 +1,45 @@
 # eConsulta
 
-This template should help get you started developing with Vue 3 in Vite.
+Projeto desenvolvido com vue 3 e vite.
 
-## Recommended IDE Setup
+## Configuração IDE recomendada
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Customize configuration
+## Personalizar configuração
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-## Project Setup
+## Dependências utilizadas
+
+"dependencies": {
+"@vuelidate/core": "^2.0.3",
+"@vuelidate/validators": "^2.0.4",
+"axios": "^1.9.0",
+"vue": "^3.5.13",
+"vue-router": "^4.5.1",
+"vuetify": "^3.8.4"
+},
+
+## Etilização
+
+Foi utilizado CSS Reset com CSS comum e a maioria dos componentes foram estilizados com o próprio modelo do Vuetify.
+
+## Configuração do projeto
+
+Instalação de todas as dependências.
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Compilar e recarregar rapidamente para desenvolvimento
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Compilar e Minificar para Produção
 
 ```sh
 npm run build

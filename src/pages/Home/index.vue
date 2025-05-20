@@ -20,6 +20,12 @@
         para marcar uma consulta. Com esse aplicativo, o processo de agendamento
         se torna mais rápido, organizado e eficiente para todos.
       </v-card-text>
+      <h2 class="text-subtitle-1 font-weight-bold mb-4">Instruções de uso</h2>
+      <v-card-text class="text-justify">
+        Ao acessar o aplicativo, cadastre ambas as contas para possibilitar a
+        comunicação entre os dois tipos de áreas. Primeiramente, crie os
+        horários dos médicos para depois agendar como paciente.
+      </v-card-text>
     </v-card>
   </v-container>
 </template>

@@ -21,6 +21,8 @@ import {
   mdiEyeOff,
   mdiLock,
   mdiLockCheck,
+  mdiLogin,
+  mdiLogout,
   mdiTimerEditOutline,
   mdiTimerPlusOutline,
 } from "@mdi/js";
@@ -35,6 +37,8 @@ const vuetify = createVuetify({
     aliases: {
       ...aliases,
       account: mdiAccount,
+      login: mdiLogin,
+      logout: mdiLogout,
       doctor: mdiDoctor,
       email: mdiEmail,
       lock: mdiLock,

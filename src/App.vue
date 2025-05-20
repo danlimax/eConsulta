@@ -9,11 +9,15 @@ watch(group, () => {
   drawer.value = false;
 });
 
-const { loadUser, loading } = useAuth();
+const { loadUser, loading, user, isAuthenticated, logout } = useAuth();
 
 onMounted(async () => {
   await loadUser();
 });
+
+const hasRole = (role) => {
+  return user.value && user.value.role === role;
+};
 </script>
 
 <template>
@@ -51,18 +55,39 @@ onMounted(async () => {
             link
             title="Home"
           ></v-list-item>
+
           <v-list-item
+            v-if="isAuthenticated && hasRole('paciente')"
             class="text-white"
             to="/patient"
             link
-            title="Pacientes"
+            title="Área do Paciente"
           ></v-list-item>
 
           <v-list-item
+            v-if="isAuthenticated && hasRole('medico')"
             class="text-white"
             to="/doctor"
             link
-            title="Médicos"
+            title="Área do Médico"
+          ></v-list-item>
+
+          <v-list-item
+            v-if="!isAuthenticated"
+            class="text-white"
+            to="/login"
+            append-icon="$login"
+            link
+            title="Login"
+          ></v-list-item>
+
+          <v-list-item
+            v-else
+            class="text-white"
+            @click="logout"
+            append-icon="$logout"
+            link
+            title="Logout"
           ></v-list-item>
         </div>
       </v-app-bar>
@@ -73,8 +98,28 @@ onMounted(async () => {
         temporary
       >
         <v-list-item to="/" link title="Home"></v-list-item>
-        <v-list-item to="/patient" link title="Pacientes"></v-list-item>
-        <v-list-item to="/doctor" link title="Médicos"></v-list-item>
+
+        <v-list-item
+          v-if="isAuthenticated && hasRole('paciente')"
+          to="/patient"
+          link
+          title="Área do Paciente"
+        ></v-list-item>
+
+        <v-list-item
+          v-if="isAuthenticated && hasRole('medico')"
+          to="/doctor"
+          link
+          title="Área do Médico"
+        ></v-list-item>
+
+        <v-list-item
+          v-if="!isAuthenticated"
+          to="/login"
+          link
+          title="Login"
+        ></v-list-item>
+        <v-list-item v-else @click="logout" link title="Logout"></v-list-item>
       </v-navigation-drawer>
       <v-main class="pt-16">
         <RouterView />

@@ -22,7 +22,7 @@ class AppointmentService extends APIService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Failed to list appointments:", error);
       throw error;
     }
   }
@@ -42,12 +42,41 @@ class AppointmentService extends APIService {
       );
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to fetch appointments");
+        throw new Error(
+          error.message || "Failed to fetch doctor's appointments"
+        );
       }
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Error getting schedules by doctor ID:", error);
+      throw error;
+    }
+  }
+
+  async getSchedulesByPatientId(patientId) {
+    try {
+      const token = this.getToken();
+      const response = await fetch(
+        `${this.baseURL}/schedule/patient/apointments/${patientId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          error.message || "Failed to fetch patient's appointments"
+        );
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error getting schedules by patient ID:", error);
       throw error;
     }
   }
@@ -70,11 +99,32 @@ class AppointmentService extends APIService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Error listing doctors:", error);
       throw error;
     }
   }
+  async listPatients() {
+    try {
+      const token = this.getToken();
+      const response = await fetch(`${this.baseURL}/user/patients`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to fetch patients");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error listing patients:", error);
+      throw error;
+    }
+  }
   async createSchedule(schedules) {
     try {
       const token = this.getToken();
@@ -108,18 +158,43 @@ class AppointmentService extends APIService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(data), // Os dados devem ser enviados no corpo da requisição, stringificados para JSON
+        body: JSON.stringify(data),
       });
 
-      // Verificar se a requisição foi bem-sucedida (status 2xx)
       if (!response.ok) {
-        const errorData = await response.json(); // Tenta ler a mensagem de erro do servidor
-        throw new Error(errorData.message || "Erro na requisição"); // Lança um erro com a mensagem do servidor ou uma genérica
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erro na requisição");
       }
 
-      return await response.json(); // Retorna os dados da resposta em formato JSON
+      return await response.json();
     } catch (error) {
       console.error("Erro ao atualizar agendamento:", error);
+      throw error;
+    }
+  }
+
+  async updatePatientSchedule(scheduleId) {
+    try {
+      const token = this.getToken();
+      const response = await fetch(
+        `${this.baseURL}/schedule/apointment/${scheduleId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || `Erro ao agendar horário ${scheduleId}`
+        );
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Erro ao agendar horário ${scheduleId}:`, error);
       throw error;
     }
   }

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import AppointmentService from "@/services/appointmentService";
 import authService from "@/services/authService";
 import DoctorSchedulesModal from "./DoctorSchedulesModal.vue";
@@ -7,9 +7,9 @@ import DoctorSchedulesModal from "./DoctorSchedulesModal.vue";
 const service = new AppointmentService();
 
 const appointments = ref([]);
+const patients = ref([]);
 const headers = [
   { title: "Paciente", key: "patient", align: "start" },
-
   {
     title: "Data e Horário",
     key: "startTime",
@@ -23,8 +23,18 @@ const loading = ref(false);
 const error = ref(null);
 const dialogUpdate = ref(false);
 const selectedAppointment = ref(null);
-const selectedDate = ref(""); // Armazena a data selecionada no date-picker (formato YYYY-MM-DD)
-const timeSlots = ref([{ startTime: "", endTime: "" }]); // Armazena as horas (formato HH:MM)
+const selectedDate = ref("");
+const timeSlots = ref([{ startTime: "", endTime: "" }]);
+
+const snackbar = ref(false);
+const snackbarMessage = ref("");
+const snackbarColor = ref("success");
+
+const showSnackbar = (message, color = "success") => {
+  snackbarMessage.value = message;
+  snackbarColor.value = color;
+  snackbar.value = true;
+};
 
 const formIsValid = computed(() => {
   if (
@@ -46,6 +56,10 @@ const formIsValid = computed(() => {
   const endTimeInMinutes = endHours * 60 + endMinutes;
 
   if (startTimeInMinutes >= endTimeInMinutes) {
+    showSnackbar(
+      "O horário de início deve ser anterior ao horário de fim.",
+      "error"
+    );
     return false;
   }
 
@@ -60,18 +74,25 @@ const formIsValid = computed(() => {
     0
   );
 
-  return selectedDateTime.getTime() > new Date().getTime();
+  if (selectedDateTime.getTime() < new Date().getTime()) {
+    showSnackbar("Não é possível agendar horários no passado.", "error");
+    return false;
+  }
+
+  return true;
 });
 
-onMounted(async () => {
+const fetchAppointments = async () => {
   loading.value = true;
+  error.value = null;
   try {
     const user = await authService.userDetails();
 
-    if (user.role === "paciente") {
-      appointments.value = await service.list();
-    } else if (user.role === "medico") {
+    if (user.role === "medico") {
+      patients.value = await service.listPatients();
       appointments.value = await service.getSchedulesByDoctorId(user.id);
+    } else if (user.role === "paciente") {
+      appointments.value = await service.list();
     } else {
       error.value = "Tipo de usuário não suportado.";
     }
@@ -80,6 +101,16 @@ onMounted(async () => {
     console.error(err);
   } finally {
     loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  await fetchAppointments();
+});
+
+watch(dialogUpdate, (val) => {
+  if (!val) {
+    resetUpdateForm();
   }
 });
 
@@ -103,7 +134,6 @@ const formatDateTime = (dateString, type = "full") => {
     options.minute = "2-digit";
     return date.toLocaleString("pt-BR", options);
   } else {
-    // 'full'
     options.day = "2-digit";
     options.month = "2-digit";
     options.year = "numeric";
@@ -127,6 +157,14 @@ const getFullTimeRange = (startTime, endTime) => {
   }
 
   return `${formattedDate} ${formattedStartTime} - ${formattedEndTime}`;
+};
+
+const getPatientName = (patientId) => {
+  if (!patientId) {
+    return "Horário disponível";
+  }
+  const patient = patients.value.find((p) => p.id === patientId);
+  return patient ? patient.name : "Paciente desconhecido";
 };
 
 const openUpdateModal = (item) => {
@@ -162,9 +200,23 @@ const openUpdateModal = (item) => {
   dialogUpdate.value = true;
 };
 
+const resetUpdateForm = () => {
+  selectedAppointment.value = null;
+  selectedDate.value = "";
+  timeSlots.value = [{ startTime: "", endTime: "" }];
+  error.value = null;
+};
+
 const submitUpdateSchedule = async () => {
+  if (!formIsValid.value) {
+    return;
+  }
+
   try {
-    if (!selectedAppointment.value) return;
+    if (!selectedAppointment.value) {
+      showSnackbar("Nenhum agendamento selecionado para atualização.", "error");
+      return;
+    }
 
     const slot = timeSlots.value[0];
     const [startHours, startMinutes] = slot.startTime.split(":").map(Number);
@@ -198,17 +250,12 @@ const submitUpdateSchedule = async () => {
     };
 
     await service.updateSchedule(selectedAppointment.value.id, updateData);
-
-    const user = await authService.userDetails();
-
-    if (user.role === "medico") {
-      appointments.value = await service.getSchedulesByDoctorId(user.id);
-    }
-
+    showSnackbar("Agendamento atualizado com sucesso!");
     dialogUpdate.value = false;
+    await fetchAppointments();
   } catch (err) {
     const errorMessage = err.message || "Erro ao atualizar agendamento.";
-    error.value = errorMessage;
+    showSnackbar(errorMessage, "error");
     console.error("Erro ao submeter atualização:", err);
   }
 };
@@ -216,7 +263,12 @@ const submitUpdateSchedule = async () => {
 
 <template>
   <v-container>
-    <DoctorSchedulesModal />
+    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
+      {{ snackbarMessage }}
+    </v-snackbar>
+
+    <DoctorSchedulesModal @scheduleCreated="fetchAppointments" />
+
     <v-card class="mx-auto" max-width="900" elevation="4">
       <v-card-title class="text-h6 text-center">
         Lista de Agendamentos
@@ -237,7 +289,7 @@ const submitUpdateSchedule = async () => {
         loading-text="Carregando agendamentos..."
       >
         <template #item.patient="{ item }">
-          {{ item.patientId ? item.patientId : "Horário disponível" }}
+          {{ getPatientName(item.patientId) }}
         </template>
 
         <template #item.startTime="{ item }">
@@ -245,104 +297,92 @@ const submitUpdateSchedule = async () => {
         </template>
 
         <template #item.actions="{ item }">
-          <v-dialog v-model="dialogUpdate" max-width="600">
-            <template v-slot:activator="{ props: activatorProps }">
-              <v-btn
-                class="text-none font-weight-regular"
-                icon="$calendarEdit"
-                v-bind="activatorProps"
-                @click="openUpdateModal(item)"
-              ></v-btn>
-            </template>
-
-            <v-card title="Atualizar horários">
-              <v-card-text>
-                <div class="d-flex flex-column justify-center gap-4">
-                  <div class="d-flex justify-center">
-                    <v-date-picker
-                      v-model="selectedDate"
-                      show-adjacent-months
-                      title="Selecione a data *"
-                      :min="new Date().toISOString().split('T')[0]"
-                    ></v-date-picker>
-                  </div>
-
-                  <div v-if="selectedDate" class="my-4">
-                    <v-chip>
-                      {{
-                        new Date(selectedDate).toLocaleDateString("pt-BR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
-                      }}
-                    </v-chip>
-                  </div>
-
-                  <v-divider class="my-2"></v-divider>
-
-                  <div class="text-subtitle-1 mb-2">Intervalos de horários</div>
-
-                  <div
-                    v-for="(slot, index) in timeSlots"
-                    :key="index"
-                    class="d-flex align-center"
-                  >
-                    <v-row>
-                      <v-col cols="5">
-                        <v-text-field
-                          v-model="slot.startTime"
-                          label="Horário de início *"
-                          type="time"
-                          prepend-icon="$timerEdit"
-                          density="compact"
-                          :rules="[
-                            (v) => !!v || 'Horário de início é obrigatório',
-                          ]"
-                        />
-                      </v-col>
-                      <v-col cols="5">
-                        <v-text-field
-                          v-model="slot.endTime"
-                          label="Horário de fim *"
-                          type="time"
-                          density="compact"
-                          :rules="[
-                            (v) => !!v || 'Horário de fim é obrigatório',
-                          ]"
-                        />
-                      </v-col>
-                    </v-row>
-                  </div>
-                </div>
-
-                <small class="text-caption text-medium-emphasis mt-4 d-block"
-                  >* indica um campo obrigatório</small
-                >
-              </v-card-text>
-
-              <v-divider></v-divider>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  text="Fechar"
-                  variant="plain"
-                  @click="dialogUpdate = false"
-                />
-                <v-btn
-                  color="primary"
-                  text="Enviar"
-                  variant="tonal"
-                  @click="submitUpdateSchedule"
-                  :disabled="!formIsValid"
-                />
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <v-btn
+            class="text-none font-weight-regular"
+            icon="$calendarEdit"
+            @click="openUpdateModal(item)"
+          ></v-btn>
         </template>
       </v-data-table>
     </v-card>
+
+    <v-dialog v-model="dialogUpdate" max-width="600">
+      <v-card title="Atualizar horários">
+        <v-card-text>
+          <div class="d-flex flex-column justify-center gap-4">
+            <div class="d-flex justify-center">
+              <v-date-picker
+                v-model="selectedDate"
+                show-adjacent-months
+                title="Selecione a data *"
+                :min="new Date().toISOString().split('T')[0]"
+              ></v-date-picker>
+            </div>
+
+            <div v-if="selectedDate" class="my-4">
+              <v-chip>
+                {{
+                  new Date(selectedDate).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })
+                }}
+              </v-chip>
+            </div>
+
+            <v-divider class="my-2"></v-divider>
+
+            <div class="text-subtitle-1 mb-2">Intervalos de horários</div>
+
+            <div
+              v-for="(slot, index) in timeSlots"
+              :key="index"
+              class="d-flex align-center"
+            >
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="slot.startTime"
+                    label="Horário de início *"
+                    type="time"
+                    density="compact"
+                    :rules="[(v) => !!v || 'Horário de início é obrigatório']"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="slot.endTime"
+                    label="Horário de fim *"
+                    type="time"
+                    density="compact"
+                    :rules="[(v) => !!v || 'Horário de fim é obrigatório']"
+                  />
+                </v-col>
+              </v-row>
+            </div>
+          </div>
+
+          <small class="text-caption text-medium-emphasis mt-4 d-block"
+            >* indica um campo obrigatório</small
+          >
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="Fechar" variant="plain" @click="dialogUpdate = false" />
+          <v-btn
+            color="primary"
+            text="Enviar"
+            variant="tonal"
+            @click="submitUpdateSchedule"
+            :disabled="!formIsValid"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 

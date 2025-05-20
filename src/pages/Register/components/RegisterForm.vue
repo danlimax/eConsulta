@@ -61,14 +61,12 @@ const handleSubmit = async () => {
       password: form.password,
     };
 
-    let response;
     if (form.userType === "patient") {
       response = await authService.registerPatient(userData);
     } else {
       response = await authService.registerDoctor(userData);
     }
 
-    console.log("Registration successful:", response);
     success.value = `Conta criada com sucesso! Agora você pode fazer login como ${form.userType}.`;
 
     Object.keys(form).forEach((key) => {
