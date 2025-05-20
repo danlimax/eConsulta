@@ -10,7 +10,7 @@ const form = reactive({
   email: "",
   password: "",
   confirmPassword: "",
-  userType: "patient",
+  userType: "paciente",
 });
 
 const loading = ref(false);
@@ -21,8 +21,8 @@ const showConfirmPassword = ref(false);
 const valid = ref(false);
 
 const userTypes = [
-  { value: "patient", title: "Paciente", icon: "$account", color: "blue" },
-  { value: "doctor", title: "Médico", icon: "$doctor", color: "green" },
+  { value: "paciente", title: "Paciente", icon: "$account", color: "blue" },
+  { value: "medico", title: "Médico", icon: "$doctor", color: "green" },
 ];
 
 const nameRules = [
@@ -61,7 +61,8 @@ const handleSubmit = async () => {
       password: form.password,
     };
 
-    if (form.userType === "patient") {
+    let response;
+    if (form.userType === "paciente") {
       response = await authService.registerPatient(userData);
     } else {
       response = await authService.registerDoctor(userData);
@@ -124,7 +125,6 @@ const goToLogin = () => {
 
           <v-form v-model="valid" @submit.prevent="handleSubmit">
             <v-card-text class="pa-0">
-              <
               <div class="mb-4">
                 <v-label class="text-subtitle-2 font-weight-medium mb-2">
                   Cadastre como

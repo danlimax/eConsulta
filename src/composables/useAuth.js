@@ -7,8 +7,8 @@ const error = ref(null);
 
 export function useAuth() {
   const isAuthenticated = computed(() => !!user.value);
-  const isPatient = computed(() => user.value?.userType === "Patient");
-  const isDoctor = computed(() => user.value?.userType === "Doctor");
+  const isPatient = computed(() => user.value?.userType === "paciente");
+  const isDoctor = computed(() => user.value?.userType === "medico");
 
   const loadUser = async () => {
     if (!authService.isAuthenticated()) {
